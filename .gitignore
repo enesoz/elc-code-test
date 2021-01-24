@@ -1,2 +1,5 @@
 .eslintrc.json
 node_modules/
+/.idea/
+/.local_server/
+/package-lock.json
