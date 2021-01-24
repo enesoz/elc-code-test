@@ -6,6 +6,8 @@ import React from 'react';
 
 class Menu extends React.Component {
 
+    data:SearchItem;
+
     /**
      * Main constructor for the Menu Class
      * @memberof Menu
@@ -34,12 +36,11 @@ class Menu extends React.Component {
      * @memberof Menu
      * @param e [Object] - the event from a text change handler
      */
-    onSearch(e) {
-        
-        // Start Here
-        // ...
-        
+    async onSearch(e) {
 
+        const response = await fetch('https://api.npms.io/v2/search?q=react');
+        const data = await response.json();
+        this.setState({ totalReactPackages: data.total })
     }
 
     /**
