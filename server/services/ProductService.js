@@ -1,9 +1,16 @@
-const data      = require('../data');
+const data = require('../data');
+
 class ProductService {
 
-      getAutoCompleteResult(query) {
-        return data.find(it => it.name.contains(query)||it.tags.toString().contains(query)||it.about.contains(query));
+    constructor() {
+        this.products = Object.values(data);
+    }
+
+    getAutoCompleteResult(query) {
+        let data = this.products.filter(it => it.name.includes(query) || it.tags.toString().includes(query) || it.about.includes(query));
+        return data.length > 5 ? data.slice(0, 5) : data;
     }
 
 }
+
 module.exports = ProductService

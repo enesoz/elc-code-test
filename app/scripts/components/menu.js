@@ -1,12 +1,10 @@
 /**
  * This file will hold the Menu that lives at the top of the Page, this is all rendered using a React Component...
- * 
+ *
  */
 import React from 'react';
 
 class Menu extends React.Component {
-
-    data:SearchItem;
 
     /**
      * Main constructor for the Menu Class
@@ -17,6 +15,7 @@ class Menu extends React.Component {
         this.state = {
             showingSearch: false
         };
+        this.data = [];
     }
 
     /**
@@ -36,19 +35,27 @@ class Menu extends React.Component {
      * @memberof Menu
      * @param e [Object] - the event from a text change handler
      */
-    async onSearch(e) {
+    onSearch(e) {
 
-        const response = await fetch('https://api.npms.io/v2/search?q=react');
-        const data = await response.json();
-        this.setState({ totalReactPackages: data.total })
+        e.persist();
+        this.setState({text: e.target.value});
+        this.text = e.target.value;
+        if (this.text.length >= 3) {
+            fetch('http://localhost:3035/search?keyword=' + this.text).then(res => {
+                this.data = Object.values(res.json());
+            }).catch(err => {
+                console.log(err);
+            });
+            this.setState({totalReactPackages: this.data.length})
+        }
     }
 
     /**
      * Renders the default app in the window, we have assigned this to an element called root.
-     * 
+     *
      * @returns JSX
      * @memberof App
-    */
+     */
     render() {
         return (
             <header className="menu">
@@ -71,9 +78,9 @@ class Menu extends React.Component {
                     </div>
                 </div>
                 <div className={(this.state.showingSearch ? "showing " : "") + "search-container"}>
-                    <input type="text" onChange={(e) => this.onSearch(e)} />
+                    <input type="text" placeholder={"Type a word"} value={this.text} onChange={(e) => this.onSearch(e)}/>
                     <a href="#" onClick={(e) => this.showSearchContainer(e)}>
-                        <i className="material-icons close">close</i>
+                        <i className="material-icons close" onClick={this.text = ""}>close</i>
                     </a>
                 </div>
             </header>

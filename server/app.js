@@ -36,17 +36,21 @@ const url = require('url');
  */
 http.createServer(function (req, res) {
     // .. Here you can create your data response in a JSON format
+    res.setHeader('Access-Control-Allow-Origin', "*");
+    res.setHeader('Access-Control-Allow-Headers', "*");
+    res.setHeader('Content-Type', 'application/json;charset=utf-8');
+
     if (req.method === 'GET') {
-        const {pathname} = url.parse(req.url);
-        if (pathname === '/query') {
-            res.setHeader('Content-Type', 'application/json;charset=utf-8');
-            let query = req.query;
-            console.log("Client search keyword :{}",query);
+        const urlParts = url.parse(req.url, true);
+        if (urlParts.pathname === '/search') {
+            let query = urlParts.query.keyword;
+            console.log("Client search keyword : ", query);
             res.end(JSON.stringify(serviceInstance.getAutoCompleteResult(query)));
             return;
         }
     }
-    res.statusCode = 404
+    res.statusCode = 404;
+
     res.end("{error:HTTP.404}");
 
 }).listen(port);
