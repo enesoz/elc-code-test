@@ -3,6 +3,9 @@
  *
  */
 import React from 'react';
+import Result from './result'
+
+var data = [];
 
 class Menu extends React.Component {
 
@@ -13,9 +16,9 @@ class Menu extends React.Component {
     constructor() {
         super();
         this.state = {
-            showingSearch: false
+            showingSearch: false,
+            result: []
         };
-        this.data = [];
     }
 
     /**
@@ -41,12 +44,15 @@ class Menu extends React.Component {
         this.setState({text: e.target.value});
         this.text = e.target.value;
         if (this.text.length >= 3) {
-            fetch('http://localhost:3035/search?keyword=' + this.text).then(res => {
-                this.data = Object.values(res.json());
+            fetch('http://localhost:3035/search?keyword=' + this.text)
+                .then(res => res.json()
+                ).then(data => {
+                this.setState({result: data});
+                console.log("Data:", data);
             }).catch(err => {
                 console.log(err);
             });
-            this.setState({totalReactPackages: this.data.length})
+            console.log("After Fetch:", this.data);
         }
     }
 
@@ -80,8 +86,11 @@ class Menu extends React.Component {
                 <div className={(this.state.showingSearch ? "showing " : "") + "search-container"}>
                     <input type="text" placeholder={"Type a word"} value={this.text} onChange={(e) => this.onSearch(e)}/>
                     <a href="#" onClick={(e) => this.showSearchContainer(e)}>
-                        <i className="material-icons close" onClick={this.text = ""}>close</i>
+                        <i className="material-icons close">close</i>
                     </a>
+                </div>
+                <div className={(this.state.result && this.state.result[0] ? "showing " : "") + "content"}>
+                    <Result value={this.state.result}/>
                 </div>
             </header>
         );
